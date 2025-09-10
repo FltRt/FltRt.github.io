@@ -1,0 +1,13 @@
+
+.s0 {
+    width: 5%;
+	height: 100vh;
+    background-color: #ff0000;
+border: 2px solid #dd0000;
+    display: inline-block;
+    transform: skewX(-8deg);
+    position:absolute;
+    left:22%;
+    
+
+}
