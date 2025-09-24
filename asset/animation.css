@@ -1,0 +1,270 @@
+.j0{
+    width:100%;
+    height:100vh;
+    background-color: #77456e;
+    position:absolute;
+    z-index: -100;
+}
+
+.j0:hover .j1{
+    animation: j1a 5.5s ease-in-out infinite;
+}
+@keyframes j1a {
+    0% {height:50%; top: 35%;}  
+    50% {height:57%; top: 25%;}
+    100% {height:50%; top: 35%;}
+}
+
+.j0:hover .j2{
+    transform: translateZ(0);
+    animation: j2a 5.5s ease-in-out infinite;
+}
+@keyframes j2a {
+    0% {height: 14%; top: 28%;}  
+    50% {height: 0%;top: 25%;}
+    100% {height:14%;top: 28%;}
+}
+
+.j0:hover .j3{
+    transform: translateZ(0);
+    animation: j3a 5.5s ease-in-out infinite;
+}
+@keyframes j3a {
+    0% {height: 14%; top: 78%;}  
+    50% {height: 0%;top: 82%;}
+    100% {height:14%;top: 78%;}
+}
+
+.j0:hover .j4{
+    transform: translateZ(0);
+    animation: j4a 5.5s ease-in-out infinite;
+}
+@keyframes j4a {
+    0% {height: 14%; top: 78%;}  
+    50% {height: 0%;top: 82%;}
+    100% {height:14%;top: 78%;}
+}
+
+.j0:hover .j5{
+    transform: translateZ(0);
+    animation: j5a 5.5s ease-in-out infinite;
+}
+@keyframes j5a {
+    0% {height: 14%; top: 48%;}  
+    50% {height: 0%;top: 46%;}
+    100% {height:14%;top: 48%;}
+}
+
+.j0:hover .j6{
+    transform: translateZ(0);
+    animation: j6a 5.5s ease-in-out infinite;
+}
+@keyframes j6a {
+    0% {height: 20%; top: 35%;}  
+    50% {height: 21%;top: 25%;}
+    100% {height:20%;top: 35%;}
+}
+
+
+
+
+.j1{
+    
+    box-sizing: border-box;
+    width:15%;
+    height:50%;
+    background-color: #b3a482;
+    border: 1px solid #c6bb85;
+    position:absolute;
+    
+    left:60%;
+    top:35%;
+    z-index: -10;
+}
+
+
+
+.j2{
+    box-sizing: border-box;
+    width:15%;
+    height:14%;
+    background-color: #c6bb85;
+    border-radius: 50%;
+    border: 1px solid #e2d98d;
+    
+    position:absolute;
+    
+    left:60%;
+    top:28%;
+    z-index: 5;
+}
+
+.j3{
+    box-sizing: border-box;
+    width:15%;
+    height:14%;
+    background-color: #b3a482;
+    
+    border-radius: 50%;
+    position:absolute;
+    
+    left:60%;
+    top:78%;
+    z-index: 0;
+}
+
+.j4{
+    box-sizing: border-box;
+    width:15%;
+    height:14%;
+    background-color: #c6bb85;
+    border: 1px solid #a69566;
+    border-radius: 50%;
+    position:absolute;
+    
+    left:60%;
+    top:78%;
+    z-index: 5;
+}
+
+.j5{
+    box-sizing: border-box;
+    width:15%;
+    height:14%;
+    background-color: #e2d98d;
+    border-radius: 50%;
+    border: 1px solid #c6bb85;
+    
+    position:absolute;
+    
+    left:60%;
+    top:48%;
+    z-index: 5;
+}
+
+.j6{
+    box-sizing: border-box;
+    width:15%;
+    height:20%;
+    background-color: #eee494;
+    
+    position:absolute;
+    
+    left:60%;
+    top:35%;
+    z-index: 0;
+}
+ 
+/* .j7{
+    box-sizing: border-box;
+    width:7%;
+    height:12.5%;
+    background-color: #c6bb85;
+    border-radius: 50%;
+    border: 1px solid #e2d98d;
+    
+    position:absolute;
+    
+    left:19%;
+    top:35.5%;
+    z-index: 5;
+} */
+
+.j7{
+    box-sizing: border-box;
+    width:15%;
+    height:27%;
+    background-color: #c6bb85;
+    border-radius: 50%;
+    border: 1px solid #e2d98d;
+    
+    position:absolute;
+    
+    left:15%;
+    top:28%;
+    z-index: 5;
+}
+
+.j8{
+    box-sizing: border-box;
+    width:15%;
+    height:27%;
+    background-color: #b3a482;
+    
+    border-radius: 50%;
+    position:absolute;
+    
+    left:15%;
+    top:28%;    
+    z-index: 0;
+}
+/* .j8{
+    box-sizing: border-box;
+    width:18%;
+    height:32.5%;
+    background-color: #b3a482;
+    
+    border-radius: 50%;
+    position:absolute;
+    
+    left:13.5%;
+    top:25.5%;
+    z-index: 0;
+} */
+
+/* .j9{
+    box-sizing: border-box;
+    width:12%;
+    height:22%;
+    background-color: #e2d98d;
+    border-radius: 50%;
+    border: 1px solid #c6bb85;
+    
+    position:absolute;
+    
+    left:16.5%;
+    top:30.5%;
+    z-index: 4;
+} */
+
+.j9{
+    box-sizing: border-box;
+    width:15%;
+    height:27%;
+    background-color: #e2d98d;
+    border-radius: 50%;
+    border: 1px solid #c6bb85;
+    
+    position:absolute;
+    
+    left:15%;
+    top:28%;
+    z-index: 4;
+}
+
+.j0:hover .j7{
+    animation: j7a 7.5s cubic-bezier(.9,0,.18,1) infinite;
+}
+@keyframes j7a{
+    0% {width:15%;height:27%;left:15%;top:28%}  
+    50% {width:7%;height:12.5%;left:19%;top:35.5%}
+    100% {width:15%;height:27%;left:15%;top:28%}
+}
+
+.j0:hover .j8{
+    animation: j8a 7.5s cubic-bezier(.9,0,.18,1) infinite;
+}
+@keyframes j8a{
+    0% {width:15%;height:27%;left:15%;top:28%}  
+    50% {width:18%;height:32.5%;left:13.5%;top:25.5%}
+    100% {width:15%;height:27%;left:15%;top:28%}
+}
+
+.j0:hover .j9{
+    animation: j9a 7.5s cubic-bezier(.9,0,.18,1) infinite;
+}
+@keyframes j9a{
+    0% {width:15%;height:27%;left:15%;top:28%}  
+    50% {width:12%;height:22%;left:16.5%;top:30.5%}
+    100% {width:15%;height:27%;left:15%;top:28%}
+}
