@@ -1,0 +1,8 @@
+body {
+  display: flex;
+  margin: 0;
+  height: 100vh;
+}
+div {
+  height: 100vh;
+}

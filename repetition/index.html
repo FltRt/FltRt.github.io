@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Repetition</title>
+    <link rel="stylesheet" href="./repetition.css">
+  </head>
+  <body>
+    <audio id="dee" src="./dee.wav"></audio>
+
+    <div class="b1" style="position:absolute;left:0;top:0;width:50%;height:100vh;background:transparent;"></div>
+    <div class="b2" style="position:absolute;left:50%;top:0;width:50%;height:100vh;background:transparent;"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const audio = document.getElementById("dee");
+        const b1 = document.querySelector(".b1");
+        const b2 = document.querySelector(".b2");
+
+        
+        let hoverLeft = false;
+        let hoverRight = false;
+
+        
+        b1.addEventListener("mouseenter", () => hoverLeft = true);
+        b1.addEventListener("mouseleave", () => hoverLeft = false);
+        b2.addEventListener("mouseenter", () => hoverRight = true);
+        b2.addEventListener("mouseleave", () => hoverRight = false);
+
+        document.body.addEventListener("click", function startEverything() {
+          audio.play().catch(() => {});
+
+         
+          setInterval(() => {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+          }, 500);
+
+          
+          for (let i = 0; i < 80; i++) {
+            setTimeout(() => {
+              let div = document.createElement("div");
+              div.className = "r" + i;
+              div.style.position = "absolute";
+              div.style.backgroundColor = "black";
+              div.style.width = "5px";
+              div.style.height = "100vh";
+              div.style.right = i * 1.25 + "%";
+              document.body.appendChild(div);
+            }, i * 500);
+          }
+
+          
+          setTimeout(() => {
+          let varTime = 500;
+          let baseTime = 500;
+          let baseSpacing = 1.25;
+          let count = 0;
+
+ 
+            let hoveringLeft = false;
+            let hoveringRight = false;
+            document.querySelector(".b1").addEventListener("mouseenter", () => hoveringLeft = true);
+            document.querySelector(".b1").addEventListener("mouseleave", () => hoveringLeft = false);
+            document.querySelector(".b2").addEventListener("mouseenter", () => hoveringRight = true);
+            document.querySelector(".b2").addEventListener("mouseleave", () => hoveringRight = false);
+
+            function spawnSecondGroup() {
+              
+              if (hoveringLeft) varTime = Math.max(100, varTime - 10);
+              if (hoveringRight) varTime = Math.min(2000, varTime + 10);
+
+              
+              let spacing = baseSpacing * (varTime / baseTime);
+
+              
+              let div = document.createElement("div");
+              div.className = "s" + count;
+              div.style.position = "absolute";
+              div.style.backgroundColor = "black";
+              div.style.width = "5px";
+              div.style.height = "100vh";
+              div.style.right = (count * spacing) + "%";
+              document.body.appendChild(div);
+
+              
+              audio.currentTime = 0;
+              audio.play().catch(() => {});
+
+              count++;
+
+              
+              if (count >= 120) {
+                document.querySelectorAll("[class^='s']").forEach(el => el.remove());
+                count = 0;
+              }
+
+              
+              setTimeout(spawnSecondGroup, varTime);
+            }
+
+            spawnSecondGroup(); 
+}, 80 * 500);
+
+          document.body.removeEventListener("click", startEverything);
+        });
+      });
+    </script>
+  </body>
+</html>

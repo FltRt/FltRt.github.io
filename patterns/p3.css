@@ -1,0 +1,7 @@
+.div{
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 1px solid black;
+    display: inline-block;
+    position:absolute;
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <link rel="stylesheet" href="./p3.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width"  />
+    <title>Pattern 3</title>
+    
+  </head>
+  <body>
+    
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      
+      for (let i = 0; i < 100; i++) {
+        
+        let div = document.createElement("div");
+        div.className = "s" + i;
+        div.style.position = "absolute";
+        div.style.width = "100%";
+        div.style.height = "15px";
+        div.style.border = "5px solid grey";
+        div.style.transform = "skewY(" + 2.5 + "deg)";
+        div.style.top = (i ) + "vh";
+        document.body.appendChild(div);
+      }
+
+      for (let i = 0; i < 100; i++) {
+        
+        let div = document.createElement("div");
+        div.className = "a" + i;
+        div.style.position = "absolute";
+        div.style.width = "100%";
+        div.style.height = "15px";
+        div.style.border = "5px solid grey";
+        div.style.transform = "skewY(" + (-2.5) + "deg)";
+        div.style.top = (i ) + "vh";
+        document.body.appendChild(div);
+      }
+    });
+  </script>
+
+    
+  </body>
+</html>

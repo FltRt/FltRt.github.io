@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <link rel="stylesheet" href="./p1.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width"  />
+    <title>Pattern 1</title>
+    
+  </head>
+  <body>
+    
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      let colors = ["red","orange","yellow","green","blue","indigo","violet"];
+      for (let i = 0; i < 20; i++) {
+        let color = colors[i % 7];
+        let width = Math.random() * 20;
+        console.log(width);
+        let div = document.createElement("div");
+        div.className = "s" + i;
+        div.style.width = width + "%";
+        div.style.backgroundColor = color;
+        div.style.filter = "blur(5px)";
+        document.body.appendChild(div);
+      }
+    });
+  </script>
+
+    
+  </body>
+</html>

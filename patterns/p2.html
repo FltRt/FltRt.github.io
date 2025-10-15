@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <link rel="stylesheet" href="./p2.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width"  />
+    <title>Pattern 2</title>
+    
+  </head>
+  <body>
+    
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+  for (let i = 0; i < 3; i++) {
+    let div = document.createElement("div");
+    div.className = "text" + (i + 1);
+
+    let content = "";
+    for (let j = 0; j < 10000; j++) {
+        content += "+";
+        if ((j + 1) % 200 === 0) {
+            content += "<br>";
+        }
+    }
+    div.innerHTML = content;
+
+
+    document.body.appendChild(div);
+  }
+});
+
+  </script>
+
+    
+  </body>
+</html>
