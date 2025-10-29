@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chance</title>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const center = { x: canvas.width/2, y: canvas.height/2 };
+const xLines = Math.floor(Math.random()*5 + 3);
+const yDivisions = Math.floor(Math.random()*5 + 3);
+const maxLen = 250;
+const minLen = 80;
+
+// lines and points
+const lines = [];
+for(let i=0;i<xLines;i++){
+  const angle = Math.random()*Math.PI*2;
+  const length = Math.random()*(maxLen-minLen)+minLen;
+  const points = [];
+  for(let j=1;j<=yDivisions;j++){
+    points.push({
+      x: center.x + Math.cos(angle)*length*(j/yDivisions),
+      y: center.y + Math.sin(angle)*length*(j/yDivisions)
+    });
+  }
+  lines.push({ angle, points });
+}
+
+// final lines
+ctx.strokeStyle = '#000';
+for(let i=0;i<lines.length;i++){
+  const next = (i+1)%lines.length;
+  const ln1 = lines[i];
+  const ln2 = lines[next];
+  for(let j=0;j<yDivisions;j++){
+    const p1 = ln1.points[j];
+    const p2 = ln2.points[j];
+    ctx.beginPath();
+    ctx.moveTo(p1.x,p1.y);
+    ctx.lineTo(p2.x,p2.y);
+    ctx.stroke();
+  }
+}
+</script>
+</body>
+</html>

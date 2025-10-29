@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<title>curves with ai</title>
+<style>
+  html,body { margin:0; height:100%; display:flex; align-items:center; justify-content:center; background:#fff; }
+  canvas { border:1px solid #eee; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+function center(){ return { x: canvas.width/2, y: canvas.height/2 }; }
+
+const xLines = Math.floor(Math.random()*5+3);
+const yDivisions = Math.floor(Math.random()*5+3);
+const maxLen = 260;
+const minLen = 100;
+
+function rand(min,max){ return Math.random()*(max-min)+min; }
+
+function resize() {
+  const size = Math.min(window.innerWidth, window.innerHeight)*0.9;
+  canvas.width = size;
+  canvas.height = size;
+  draw();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// 生成放射线
+function genLines(){
+  const c = center();
+  const lines=[];
+  for(let i=0;i<xLines;i++){
+    const angle = rand(0, Math.PI*2);
+    const length = rand(minLen,maxLen);
+    const points=[];
+    for(let j=1;j<=yDivisions;j++){
+      points.push({ x: c.x+Math.cos(angle)*length*(j/yDivisions),
+                    y: c.y+Math.sin(angle)*length*(j/yDivisions) });
+    }
+    lines.push({ angle,length,points });
+  }
+  lines.sort((a,b)=>a.angle-b.angle);
+  return lines;
+}
+
+// 三点确定圆
+function circumcircle(p1,p2,p3){
+  const A = p2.x - p1.x;
+  const B = p2.y - p1.y;
+  const C = p3.x - p1.x;
+  const D = p3.y - p1.y;
+  const E = A*(p1.x+p2.x)+B*(p1.y+p2.y);
+  const F = C*(p1.x+p3.x)+D*(p1.y+p3.y);
+  const G = 2*(A*(p3.y-p2.y)-B*(p3.x-p2.x));
+  if(Math.abs(G)<1e-6) return null;
+  const cx = (D*E-B*F)/G;
+  const cy = (A*F-C*E)/G;
+  const r = Math.hypot(p1.x-cx,p1.y-cy);
+  return {cx,cy,r};
+}
+
+// 画弧线，保证始终 p1→p3，取较短弧
+function drawArcShort(p1,p2,p3){
+  const circle = circumcircle(p1,p2,p3);
+  if(!circle) return;
+  const {cx,cy,r}=circle;
+  let a1 = Math.atan2(p1.y-cy,p1.x-cx);
+  let a3 = Math.atan2(p3.y-cy,p3.x-cx);
+
+  let diff = (a3-a1+2*Math.PI)%(2*Math.PI);
+  let ccw = diff>Math.PI; // 取较短弧
+  ctx.beginPath();
+  ctx.arc(cx,cy,r,a1,a3,ccw);
+  ctx.stroke();
+}
+
+function draw(){
+  const c=center();
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle='#fafafa';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const lines = genLines();
+
+  // --- pair + imaginary line + 弧线（只画弧线） ---
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth=1.5;
+  for(let i=0;i<lines.length;i++){
+    const ln1=lines[i];
+    const ln2=lines[(i+1)%lines.length];
+    const diff=(ln2.angle-ln1.angle+2*Math.PI)%(2*Math.PI);
+
+    // imaginary line 用于圆心/半径计算
+    let imagAngle = ln1.angle + diff*rand(0.2,0.8);
+    const imagLen = rand(minLen,maxLen);
+    const imagPoints=[];
+    for(let j=1;j<=yDivisions;j++){
+      imagPoints.push({x:c.x+Math.cos(imagAngle)*imagLen*(j/yDivisions),
+                       y:c.y+Math.sin(imagAngle)*imagLen*(j/yDivisions)});
+    }
+
+    // 绘制圆弧
+    for(let j=0;j<yDivisions;j++){
+      const p1=ln1.points[j];
+      const p2=imagPoints[j];
+      const p3=ln2.points[j];
+      drawArcShort(p1,p2,p3);
+    }
+  }
+}
+</script>
+</body>
+</html>
