@@ -1,78 +1,42 @@
 let c = 512;
-let pixels = [];
-let scale = 0.03;
+let scale = 0.02;
 
-function getFloor(a){
-    if(a<0.4){
-        return 0;
-    }
-    else if(a<0.55){
-        return 1;
-    }   
-    else if(a<0.7){
-        return 2;
-    }  
-    else {
-        return 3;
-    }
-}
+let col0, col1, col2, col3;
 
 function setup() {
   createCanvas(c, c);
+  noStroke();
+
+  col0 = color(158,147,134);
+  col1 = color(180,131,92);
+  col2 = color(139,108,104);
+  col3 = color(105,120,129);
+
   for (let i = 0; i < c; i++) {
-    pixels[i] = [];
     for (let j = 0; j < c; j++) {
-      let noiseValue = noise(i*scale, j*scale);
-      pixels[i][j] = getFloor(noiseValue);
+
+      let n = noise(i*scale, j*scale);
+
       
-    }
-  }
+      let col;
 
-  for (let i = 0; i < c; i++) {
-    for (let j = 0; j < c; j++) {
-      let p = pixels[i][j];
-      if(p == 0){
-        noStroke();
-        fill(158,147,134);
-        rect(i, j, 1, 1);
+      if (n < 0.3) {
+        col = col0;
+      } else if (n < 0.45) {
+        let t = map(n, 0.3, 0.45, 0, 1);
+        col = lerpColor(col0, col1, t);
+      } else if (n < 0.6) {
+        let t = map(n, 0.45, 0.6, 0, 1);
+        col = lerpColor(col1, col2, t);
+      } else {
+        let t = map(n, 0.6, 1.0, 0, 1);
+        col = lerpColor(col2, col3, t);
       }
-      else if(p == 1){
-        noStroke();
-        fill(180,131,92);
-        rect(i, j, 1, 1);
-      }
-      else if(p == 2){
-        noStroke();
-        fill(139,108,104);
-        rect(i, j, 1, 1);
-      }
-      else {
-        noStroke();
-        fill(105,120,129);
-        rect(i, j, 1, 1);
-    }
 
-}
-}
-
-  for (let i = 0; i < c; i++) {
-    for (let j = 0; j < c; j++) {
-      let p = pixels[i][j];
-      if(0.37 < p && p < 0.42){
-      noStroke();
-      fill(0);
+      fill(col);
       rect(i, j, 1, 1);
     }
-    }
-}
-}
-
-function draw() {
-  //  background(220);
-  
-    
-    
-    
+  }
 }
 
-  
+function draw() {}
