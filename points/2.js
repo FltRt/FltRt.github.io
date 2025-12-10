@@ -40,3 +40,21 @@ function setup() {
 }
 
 function draw() {}
+
+
+// let x = 1; 
+
+// function setup() {
+//   createCanvas(1000, 1000);
+//   background(255);
+// }
+
+// function draw() {
+  
+//   for (let i = 0; i < x; i++) {
+//     circle(random(10, 990), random(10, 990), 1);
+//   }
+
+  
+//   x *= 1.001;  
+// }

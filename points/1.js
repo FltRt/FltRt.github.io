@@ -7,7 +7,7 @@ function setup() {
   
 }
 function draw() {
-  //  background(220);
+    //background(254,254,254,20);
   
 
   // for (let i = 0; i < c; i++) {
@@ -47,8 +47,10 @@ function draw() {
   for (let i = 0; i < c; i++) {
     for (let j = 0; j < c; j++) {
       let p = pixels[i][j];
-      if(0.37 < p && p < 0.42){
+      if(t/5 < p && p < t/5+0.05){
+        
       noStroke();
+      //fill(0+t*30);
       fill(0);
       rect(i, j, 1, 1);
     }
