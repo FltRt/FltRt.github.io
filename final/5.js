@@ -1,6 +1,4 @@
-/* =========================================================
-   GLOBAL VARIABLES (原封不动)
-========================================================= */
+
 
 let img;
 let allColors = []; 
@@ -8,9 +6,6 @@ let pixelMap = [];
 let noiseScale = 0.003; 
 
 
-/* =========================================================
-   P5 LIFECYCLE
-========================================================= */
 
 function setup() {
   createCanvas(1, 1);
@@ -19,25 +14,22 @@ function setup() {
 }
 
 
-/* =========================================================
-   ✅ EXTERNAL ENTRY POINT (HTML 调用这个)
-========================================================= */
+
 
 function processP5Image(_img) {
   img = _img;
 
   resizeCanvas(img.width, img.height);
 
-  // ===== 原 setup 中的全部逻辑（完全照抄） =====
+  
 
-  // 1. dramatic
   img.loadPixels();
   let dramaScore = calculateDrama();
   window.currentDramaScore = dramaScore;
 
   noiseScale = map(dramaScore, 10, 60, 0.0005, 0.02, true);
 
-  // 2. ALL pixels 
+ 
   let colorCounts = {};
   let tempPixels = [];
 
@@ -50,17 +42,15 @@ function processP5Image(_img) {
       
       let colKey = `${r},${g},${b}`;
       
-      // Store raw color data
+      
       tempPixels.push({r, g, b, key: colKey});
       
-      // Count frequency
+      
       if (!colorCounts[colKey]) colorCounts[colKey] = 0;
       colorCounts[colKey]++;
     }
   }
 
-  // 3. Sort the source pixels by their global FREQUENCY
-  // Most frequent colors go to the front of the array
   tempPixels.sort((a, b) => {
     return colorCounts[b.key] - colorCounts[a.key];
   });
@@ -71,20 +61,18 @@ function processP5Image(_img) {
 }
 
 
-/* =========================================================
-   MAP GENERATION (原封不动)
-========================================================= */
+
 
 function generateExactMap() {
   loadPixels();
   randomSeed(100);
   noiseSeed(100);
 
-  // 4. Create a list of all XY coordinates and their Noise Value
+ 
   pixelMap = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
-      // Get noise value for this position
+      
       let n = fbm(x * noiseScale, y * noiseScale);
       
       pixelMap.push({
@@ -95,12 +83,10 @@ function generateExactMap() {
     }
   }
 
-  // 5. Sort the coordinates by NOISE value
-  // Highest noise values go to front, Lowest to back
+  
   pixelMap.sort((a, b) => b.val - a.val);
 
-  // 6. Match-Up
-  // index 0 of sorted colors with index 0 of sorted noise positions
+  
   for (let i = 0; i < pixelMap.length; i++) {
     let dest = pixelMap[i]; // The coordinate (x,y)
     let col = allColors[i]; // The color assigned to this rank
@@ -116,14 +102,12 @@ function generateExactMap() {
 }
 
 
-/* =========================================================
-   HELPER FUNCTIONS (原封不动)
-========================================================= */
+
 
 function calculateDrama() {
   let totalDifference = 0;
   let sampleSize = 0;
-  // Sampling every 10th pixel for speed
+  
   for (let y = 0; y < img.height; y += 10) {
     for (let x = 0; x < img.width - 1; x += 10) {
       let idx = (y * img.width + x) * 4;
@@ -166,10 +150,9 @@ function remixBySingleColumn(sourceImg) {
 
   sourceImg.loadPixels();
 
-  // 1. 随机选一列 x
+  
   const x = floor(random(w));
 
-  // 2. 取这一列的所有像素
   let column = [];
   let colorCounts = {};
 
@@ -185,7 +168,7 @@ function remixBySingleColumn(sourceImg) {
     colorCounts[key] = (colorCounts[key] || 0) + 1;
   }
 
-  // 3. 找出出现次数最多的颜色
+
   let dominantKey = null;
   let maxCount = 0;
 
@@ -196,9 +179,7 @@ function remixBySingleColumn(sourceImg) {
     }
   }
 
-  // 4. 重排 column：
-  //    dominant color → 最上
-  //    其余顺序随机
+ 
   let top = [];
   let rest = [];
 
@@ -214,7 +195,7 @@ function remixBySingleColumn(sourceImg) {
 
   const reorderedColumn = top.concat(rest);
 
-  // 5. 生成新图像（尺寸不变）
+
   const result = createImage(w, h);
   result.loadPixels();
 
@@ -241,7 +222,7 @@ function remixBySingleColumn(sourceImg) {
 function updateUploadThumbnail(p5img) {
   const thumb = document.getElementById("imageThumb");
 
-  // p5.Image → data URL
+  //data URL
   thumb.src = p5img.canvas.toDataURL("image/png");
   thumb.style.display = "block";
 }

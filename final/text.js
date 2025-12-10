@@ -2,7 +2,7 @@
 // CONFIG
 // =================================================
 // =================================================
-// COCA sorted cache (for fast nearest lookup)
+// COCA sorted cache 
 // =================================================
 
 let COCA_SORTED = null;
@@ -50,24 +50,21 @@ function remixSegmentByAffineFrequency(segment) {
   if (freqs.length === 0) return segment;
 
   // ---------------------------------------------
-  // ✨ 两个随机系数（你可以调范围）
-  // ---------------------------------------------
 
-  // 缩放系数 a（比例保持）
+  
   const a = 0.6 + Math.random() * 2.8;   // 0.6 ~ 3.4
 
-  // 平移项 b（整体移动）
   const b = Math.random() * 8000 - 4000; // -4000 ~ +4000
 
   // ---------------------------------------------
 
   const newWords = freqs.map(f => {
     let target = a * f + b;
-    target = Math.max(1, target); // 防止负数或 0
+    target = Math.max(1, target); 
     return findClosestWordByFreq(target);
   });
 
-  // 保持原单词数量 & 顺序
+  
   return newWords.join(" ");
 }
 
@@ -86,12 +83,12 @@ document.getElementById("remixBtn").addEventListener("click", () => {
     remixSegmentByAffineFrequency(seg)
   );
 
-  // 重新组合文本
+  
   const newText = remixedSegments.join(", ");
 
   textarea.value = newText;
 
-  // 重新生成地形
+  
   generateTopo(newText);
 });
 
@@ -102,20 +99,19 @@ let GRID_Y = 160;
 const CONTOUR_STEP = 0.05;
 const INDEX_STEP = 5;
 
-let WIDTH = 280;        // 收紧宽度
-let HEIGHT = 900;       // 会在 generateTopo 里动态计算
+let WIDTH = 280;        
+let HEIGHT = 900;       
 
 const KEYWORD_FREQ_LIMIT = 20000;
 const MAX_KEYWORDS = 20;
 
 const TEXT_MARGIN = 0.12;
 
-// 控制 SVG 垂直长度（和段落数量相关）
-const MIN_HEIGHT = 150;          // SVG 最小高度
-const PIXELS_PER_SEGMENT = 30;   // 每个段落贡献的高度像素
+
+const MIN_HEIGHT = 150;          
+const PIXELS_PER_SEGMENT = 30;   
 
 // =================================================
-// GLOBAL
 // =================================================
 
 let COCA = {};
@@ -126,7 +122,6 @@ let fieldGlobal = null;
 
 // =================================================
 // LOAD COCA
-// =================================================
 
 fetch("coca_60000.json")
   .then(r => r.json())
@@ -141,7 +136,6 @@ fetch("coca_60000.json")
 
 // =================================================
 // INPUT LISTENER
-// =================================================
 
 document.getElementById("textInput").addEventListener("input", e => {
   if (!COCA || Object.keys(COCA).length === 0) return;
@@ -150,7 +144,7 @@ document.getElementById("textInput").addEventListener("input", e => {
 
 // =================================================
 // UTIL
-// =================================================
+
 
 function freqVal(f) {
   return Math.log(f + 1);
@@ -178,7 +172,6 @@ function curveComplexity(curve) {
 
 // =================================================
 // MAIN
-// =================================================
 
 function generateTopo(text) {
 
@@ -192,7 +185,6 @@ function generateTopo(text) {
     return;
   }
 
-  // 根据段落数量动态计算整体高度（不再固定 900）
   HEIGHT = Math.max(MIN_HEIGHT, segments.length * PIXELS_PER_SEGMENT);
 
   segmentsGlobal = segments;
@@ -201,7 +193,7 @@ function generateTopo(text) {
   const curves = [];
   const segmentMeans = [];
 
-  // ---------- build curves ----------
+  //  build curves 
   segments.forEach((seg, segIndex) => {
     const words = seg.toLowerCase().match(/[a-zA-Z']+/g) || [];
     const vals = [];
@@ -234,7 +226,7 @@ function generateTopo(text) {
     curves.push(curve);
   });
 
-  // ---------- vertical complexity → GRID_Y ----------
+  //  vertical complexity → GRID_Y 
   const GRID_Y_MIN = 80;
   const GRID_Y_MAX = 320;
 
@@ -248,7 +240,7 @@ function generateTopo(text) {
   let t = (avgComplexity - COMP_MIN) / (COMP_MAX - COMP_MIN);
   t = Math.max(0, Math.min(1, t));
 
-  // γ < 1：让变化更温和，不会一上来就冲顶
+  
   const gamma = 0.3;
   t = Math.pow(t, gamma);
 
@@ -256,7 +248,7 @@ function generateTopo(text) {
     GRID_Y_MIN + t * (GRID_Y_MAX - GRID_Y_MIN)
   );
 
-  // ---------- rank-based reorder ----------
+  // 
   const ranked = segmentMeans
     .map((v, i) => ({ v, i }))
     .sort((a, b) => a.v - b.v);
@@ -270,7 +262,7 @@ function generateTopo(text) {
     curvesByRank[r] = curves[i];
   });
 
-  // ---------- build field ----------
+  // field 
   const field = new Array(GRID_X * GRID_Y);
 
   for (let y = 0; y < GRID_Y; y++) {
@@ -307,7 +299,6 @@ function generateTopo(text) {
 
 // =================================================
 // SVG
-// =================================================
 
 function clearSVG() {
   document.getElementById("out").innerHTML = "<p>graphed text</p>";
@@ -320,10 +311,9 @@ function drawSVG(contours) {
   const svgNS = "http://www.w3.org/2000/svg";
   const svg = document.createElementNS(svgNS, "svg");
   svg.setAttribute("width", WIDTH);
-  svg.setAttribute("height", HEIGHT); // 使用动态 HEIGHT
+  svg.setAttribute("height", HEIGHT); 
   out.appendChild(svg);
 
-  // 使用 GRID_X / GRID_Y 分别控制 x、y 缩放
   const pathGen = d3.geoPath(
     d3.geoTransform({
       point: function (x, y) {
@@ -335,7 +325,6 @@ function drawSVG(contours) {
     })
   );
 
-  // --- contours ---
   contours.forEach((c, i) => {
     const d = pathGen(c);
     if (!d) return;
@@ -352,7 +341,6 @@ function drawSVG(contours) {
     svg.appendChild(p);
   });
 
-  // --- keywords ---
   keywordsGlobal
     .sort((a, b) => a.freq - b.freq)
     .slice(0, MAX_KEYWORDS)

@@ -48,7 +48,7 @@ body {
   display: none;
 }
 
-/* ============ strip ============ */
+
 #strip {
   display: grid;
   grid-template-columns: 1fr 1fr 160px 1fr 1fr;
@@ -62,8 +62,7 @@ body {
   min-width: 0;
 }
 
-/* ============ blocks ============ */
-/* ❗ block 不再负责居中 */
+
 .block {
   min-width: 0;
   min-height: 120px;
@@ -78,8 +77,7 @@ body {
   overflow: visible;
 }
 
-/* ============ preview ============ */
-/* ✅ 居中只发生在这里 */
+
 .preview {
   width: 100%;
   height: 100%;
@@ -110,7 +108,7 @@ body {
     min-height:0;
 }
 
-/* ============ remix ============ */
+
 #remix-block {
   border: none;
 }
@@ -125,7 +123,7 @@ body {
   cursor: pointer;
 }
 
-/* ============ text ============ */
+
 #text-block {
   display: flex;
 }
@@ -146,11 +144,11 @@ body {
   box-sizing: border-box;
 
   outline: none;
-  background-color: transparent;   /* ✅ 关键 */
+  background-color: transparent;   
 }
 
 
-/* ============ overlay ============ */
+
 #overlay {
   position: fixed;
   inset: 0;
@@ -241,7 +239,6 @@ let originalImageURL = null;
 
 
 <script>
-/* ============ overlay logic ============ */
 const overlay = document.getElementById("overlay");
 const overlayContent = document.getElementById("overlayContent");
 
@@ -254,12 +251,12 @@ document.querySelectorAll(".clickable").forEach(block => {
     e.stopPropagation();
     overlayContent.innerHTML = "";
 
-    // ✅ 情况 1：点击的是上传图片缩略图 block
+    
     if (block.querySelector("#imageThumb") && originalImageURL) {
       const img = document.createElement("img");
       img.src = originalImageURL;
 
-      // ✅ 这是“完整像素”的关键
+      
       img.style.width = "auto";
       img.style.height = "auto";
       img.style.maxWidth = "none";
@@ -269,12 +266,12 @@ document.querySelectorAll(".clickable").forEach(block => {
       overlayContent.appendChild(img);
     }
 
-    // ✅ 情况 2：点击的是 p5 processed image
+    
     else if (block.querySelector("canvas")) {
       const canvas = block.querySelector("canvas");
       const img = document.createElement("img");
 
-      // ✅ canvas → 原始分辨率 png
+      
       img.src = canvas.toDataURL("image/png");
 
       img.style.width = "auto";
@@ -286,7 +283,7 @@ document.querySelectorAll(".clickable").forEach(block => {
       overlayContent.appendChild(img);
     }
 
-    // fallback（你以后再扩）
+    
     else {
       const clone = block.cloneNode(true);
       overlayContent.appendChild(clone);
@@ -322,26 +319,25 @@ document.getElementById("remixBtn").addEventListener("click", () => {
   if (window.currentDramaScore == null || !currentUploadImage) return;
 
 
-  // 1. drama → level (1–6)
+  
   const level = dramaToLevel(window.currentDramaScore);
 
-  // 2. 从当前 processed image 取回图像
+  
   const processedImg = get(); // p5.Image
 
-  // 3. 做 strip remix（你之前定义的函数）
+  
   const remixedImage = remixBySingleColumn(processedImg);
 
 
-  // 4. ✅ 将 remix 图像视为“新的上传图像”
   currentUploadImage = remixedImage;
 
 
   originalImageURL = currentUploadImage.canvas.toDataURL("image/png");
 
-  // 5. ✅ 更新 upload image 区块显示
+  
   updateUploadThumbnail(currentUploadImage);
 
-  // 6. ✅ 再次走完整 p5 处理逻辑
+  
   processP5Image(currentUploadImage);
 });
 
@@ -349,7 +345,7 @@ imageUpload.addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
 
-  // 1. 生成缩略图（你已有 img 标签）
+  
   const url = URL.createObjectURL(file);
   
   originalImageURL = url;
@@ -357,13 +353,13 @@ imageUpload.addEventListener("change", e => {
   imageThumb.src = url;
   imageThumb.style.display = "block";
 
-  // 2. 通过 p5.loadImage 读入
+  
   loadImage(url, img => {
     currentUploadImage = img; 
-    // ✅ 调用你 p5.js 中的入口函数
+   
     processP5Image(img);
 
-    // ✅ 把 canvas 移动进 p5-container
+   
     const canvas = document.querySelector("canvas.p5Canvas");
     const container = document.getElementById("p5-container");
 
