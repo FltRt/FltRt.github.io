@@ -65,8 +65,8 @@ function processP5Image(_img) {
 
 function generateExactMap() {
   loadPixels();
-  randomSeed(100);
-  noiseSeed(100);
+  randomSeed(random(10000));
+  noiseSeed(random(10000));
 
  
   pixelMap = [];
