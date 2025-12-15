@@ -93,7 +93,7 @@ function generateExactMap() {
   updatePixels();
 }
 
-// --- HELPER FUNCTIONS ---
+
 
 function calculateDrama() {
   let totalDifference = 0;

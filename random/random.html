@@ -31,7 +31,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// 生成放射线
+
 function genLines(){
   const c = center();
   const lines=[];
@@ -49,7 +49,7 @@ function genLines(){
   return lines;
 }
 
-// 三点确定圆
+
 function circumcircle(p1,p2,p3){
   const A = p2.x - p1.x;
   const B = p2.y - p1.y;
@@ -65,7 +65,7 @@ function circumcircle(p1,p2,p3){
   return {cx,cy,r};
 }
 
-// 画弧线，保证始终 p1→p3，取较短弧
+
 function drawArcShort(p1,p2,p3){
   const circle = circumcircle(p1,p2,p3);
   if(!circle) return;
@@ -74,7 +74,7 @@ function drawArcShort(p1,p2,p3){
   let a3 = Math.atan2(p3.y-cy,p3.x-cx);
 
   let diff = (a3-a1+2*Math.PI)%(2*Math.PI);
-  let ccw = diff>Math.PI; // 取较短弧
+  let ccw = diff>Math.PI; 
   ctx.beginPath();
   ctx.arc(cx,cy,r,a1,a3,ccw);
   ctx.stroke();
@@ -88,7 +88,7 @@ function draw(){
 
   const lines = genLines();
 
-  // --- pair + imaginary line + 弧线（只画弧线） ---
+
   ctx.strokeStyle = '#000';
   ctx.lineWidth=1.5;
   for(let i=0;i<lines.length;i++){
@@ -96,7 +96,7 @@ function draw(){
     const ln2=lines[(i+1)%lines.length];
     const diff=(ln2.angle-ln1.angle+2*Math.PI)%(2*Math.PI);
 
-    // imaginary line 用于圆心/半径计算
+
     let imagAngle = ln1.angle + diff*rand(0.2,0.8);
     const imagLen = rand(minLen,maxLen);
     const imagPoints=[];
@@ -105,7 +105,7 @@ function draw(){
                        y:c.y+Math.sin(imagAngle)*imagLen*(j/yDivisions)});
     }
 
-    // 绘制圆弧
+
     for(let j=0;j<yDivisions;j++){
       const p1=ln1.points[j];
       const p2=imagPoints[j];
