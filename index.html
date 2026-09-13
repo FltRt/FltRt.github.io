@@ -142,7 +142,7 @@
   // 角度增量大幅调小（极慢速）
   let angleYW = 0;
   let angleYZ = 0;
-  const tiltX = 0.22;
+  const tiltX = 0.25;
 
   // 鞋带公式计算面积
   function calculateShoelaceArea(points) {
@@ -161,7 +161,7 @@
 
     // 旋转速度降至极低，保持极其缓慢平稳的翻转
     angleYW += 0.0005;
-    angleYZ += 0.0006;
+    angleYZ += 0.0007;
 
     const projected2D = [];
     const projected3DPoints = [];
