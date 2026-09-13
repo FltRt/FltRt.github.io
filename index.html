@@ -1,21 +1,295 @@
-<!doctype html>
-<html lang="en-US">
-    
-  <head>
-    <link rel="stylesheet" href="../asset/mystyle.css">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>My test page</title>
-  </head>
-  <body class = "homepage">
-    <p>hello world</p>
-    <a href="handmadeweb/quote1.html">Exercise 3 : handmade web</a>
-   <p><a href="csscomposition/index.html">Exercise 4 : CSS compositions</a></p> 
-   <p><a href="on_off/index.html">Exercise 5 : on-off</a></p> 
-   <p><a href="patterns/index.html">Exercise 7 : patterns</a></p> 
-   <p><a href="repetition/index.html">Exercise 8 : repetition</a></p>
-   <p><a href="random/index.html">Exercise 9 : chance</a></p>
-   <p><a href="ball/index.html">Bouncing ball</a></p>
-   <p><a href="final/index.html">Final</a></p>
-  </body>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4D 超立方体 - 特大极慢速版</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #ffffff;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* 容器扩大至 1000px */
+    .container {
+      position: relative;
+      width: 1000px;
+      height: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* 侧面文字链接外层 */
+    .face-link {
+      position: absolute;
+      color: #11111188;
+      text-decoration: none;
+      white-space: nowrap;
+      user-select: none;
+      z-index: 10;
+      opacity: 0;
+      pointer-events: none;
+      /* 淡入淡出时长稍作延长，配合慢速节奏 */
+      transition: opacity 0.8s ease;
+      transform-origin: center center;
+    }
+
+    /* 内层 span：字号加大到 48px */
+    .link-inner {
+      display: inline-block;
+      font-size: 23px;
+      font-weight: 320;
+      letter-spacing: 5px;
+      transition: transform 0.25s ease, color 0.25s ease;
+    }
+
+    .face-link:hover .link-inner {
+      color: #000000c4;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="stage">
+    <canvas id="tesseractCanvas"></canvas>
+    <a href="#" class="face-link" id="slot0" target="_blank"><span class="link-inner"></span></a>
+    <a href="#" class="face-link" id="slot1" target="_blank"><span class="link-inner"></span></a>
+    <a href="#" class="face-link" id="slot2" target="_blank"><span class="link-inner"></span></a>
+    <a href="#" class="face-link" id="slot3" target="_blank"><span class="link-inner"></span></a>
+  </div>
+
+<script>
+  const canvas = document.getElementById('tesseractCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // 无限 Loop 词汇队列
+  const WORD_LOOP = [
+    { text: 'intro to computation', url:'intro_to_computation/links.html' },
+    { text: 'generative systems', url: 'https://botanico.cargo.site/sound' },
+    { text: 'digital poetics', url: 'https://botanico.cargo.site/digpos' },
+    { text: 'programming sound', url: 'https://example.com/4' }
+  ];
+  let wordQueueIndex = 0;
+
+  const slots = [
+    document.getElementById('slot0'),
+    document.getElementById('slot1'),
+    document.getElementById('slot2'),
+    document.getElementById('slot3')
+  ];
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = 1000 * dpr;
+    canvas.height = 1000 * dpr;
+    ctx.scale(dpr, dpr);
+  }
+  resize();
+
+  // 1. 生成 16 个顶点
+  const vertices = [];
+  for (let i = 0; i < 16; i++) {
+    vertices.push([
+      (i & 1) ? 1 : -1,
+      (i & 2) ? 1 : -1,
+      (i & 4) ? 1 : -1,
+      (i & 8) ? 1 : -1
+    ]);
+  }
+
+  // 2. 生成 32 条棱线
+  const edges = [];
+  for (let i = 0; i < 16; i++) {
+    for (let j = i + 1; j < 16; j++) {
+      let diff = 0;
+      for (let k = 0; k < 4; k++) {
+        if (vertices[i][k] !== vertices[j][k]) diff++;
+      }
+      if (diff === 1) edges.push([i, j]);
+    }
+  }
+
+  // 3. 4 个翻转主面
+  const faces = [
+    { id: 0, indices: [12, 13, 15, 14], currentWord: null, isActive: false, slot: slots[0] },
+    { id: 1, indices: [14, 15, 11, 10], currentWord: null, isActive: false, slot: slots[1] },
+    { id: 2, indices: [10, 11, 9, 8],   currentWord: null, isActive: false, slot: slots[2] },
+    { id: 3, indices: [8, 9, 13, 12],   currentWord: null, isActive: false, slot: slots[3] }
+  ];
+
+  // 角度增量大幅调小（极慢速）
+  let angleYW = 0;
+  let angleYZ = 0;
+  const tiltX = 0.22;
+
+  // 鞋带公式计算面积
+  function calculateShoelaceArea(points) {
+    let area = 0;
+    const n = points.length;
+    for (let i = 0; i < n; i++) {
+      let j = (i + 1) % n;
+      area += points[i].x * points[j].y;
+      area -= points[j].x * points[i].y;
+    }
+    return Math.abs(area) / 2;
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, 1000, 1000);
+
+    // 旋转速度降至极低，保持极其缓慢平稳的翻转
+    angleYW += 0.0003;
+    angleYZ += 0.0004;
+
+    const projected2D = [];
+    const projected3DPoints = [];
+
+    vertices.forEach(v => {
+      let [x, y, z, w] = v;
+
+      // 4D YW 旋转
+      let cosYW = Math.cos(angleYW), sinYW = Math.sin(angleYW);
+      let y1 = y * cosYW - w * sinYW;
+      let w1 = y * sinYW + w * cosYW;
+
+      // 3D YZ 旋转
+      let cosYZ = Math.cos(angleYZ), sinYZ = Math.sin(angleYZ);
+      let y2 = y1 * cosYZ - z * sinYZ;
+      let z1 = y1 * sinYZ + z * cosYZ;
+
+      // 4D -> 3D 透视
+      let distance4D = 2.5;
+      let wScale = 1 / (distance4D - w1);
+      let x3D = x * wScale;
+      let y3D = y2 * wScale;
+      let z3D = z1 * wScale;
+
+      // 视角微调
+      let cosT = Math.cos(tiltX), sinT = Math.sin(tiltX);
+      let xFinal = x3D * cosT - z3D * sinT;
+      let zFinal = x3D * sinT + z3D * cosT;
+
+      projected3DPoints.push({ x: xFinal, y: y3D, z: zFinal });
+
+      // 3D -> 2D 透视 (放大倍率升至 950，中心定位到 500, 500)
+      let distance3D = 3.2;
+      let zScale = 950 / (distance3D - zFinal);
+      let screenX = 500 + xFinal * zScale;
+      let screenY = 500 + y3D * zScale;
+
+      projected2D.push({ x: screenX, y: screenY });
+    });
+
+    // 绘制大比例线条
+    ctx.strokeStyle = '#a8a8a8';
+    ctx.lineWidth = 2.0;
+    ctx.beginPath();
+    edges.forEach(([i, j]) => {
+      ctx.moveTo(projected2D[i].x, projected2D[i].y);
+      ctx.lineTo(projected2D[j].x, projected2D[j].y);
+    });
+    ctx.stroke();
+
+    // 实时计算各侧面
+    const faceMetrics = faces.map(face => {
+      const p3D = face.indices.map(idx => projected3DPoints[idx]);
+      const p2D = face.indices.map(idx => projected2D[idx]);
+
+      let v1 = { x: p3D[1].x - p3D[0].x, y: p3D[1].y - p3D[0].y, z: p3D[1].z - p3D[0].z };
+      let v2 = { x: p3D[3].x - p3D[0].x, y: p3D[3].y - p3D[0].y, z: p3D[3].z - p3D[0].z };
+      let normalZ = v1.x * v2.y - v1.y * v2.x;
+
+      let area2D = calculateShoelaceArea(p2D);
+
+      let centerX = (p2D[0].x + p2D[1].x + p2D[2].x + p2D[3].x) / 4;
+      let centerY = (p2D[0].y + p2D[1].y + p2D[2].y + p2D[3].y) / 4;
+
+      // 仿射矩阵 Skew 贴合参数（针对大几何体将基准 L_base 调整至 360）
+      let ux = (p2D[1].x - p2D[0].x + p2D[2].x - p2D[3].x) / 2;
+      let uy = (p2D[1].y - p2D[0].y + p2D[2].y - p2D[3].y) / 2;
+      let vx = (p2D[3].x - p2D[0].x + p2D[2].x - p2D[1].x) / 2;
+      let vy = (p2D[3].y - p2D[0].y + p2D[2].y - p2D[1].y) / 2;
+
+      const L_base = 360;
+      let a = ux / L_base;
+      let b = uy / L_base;
+      let c = vx / L_base;
+      let d = vy / L_base;
+
+      return {
+        face,
+        area: normalZ > 0 ? area2D : 0,
+        centerX,
+        centerY,
+        matrix: { a, b, c, d }
+      };
+    });
+
+    // 按投影面积排序
+    faceMetrics.sort((a, b) => b.area - a.area);
+
+    // 筛选前两名
+    const top2Faces = new Set(
+      faceMetrics.slice(0, 2).filter(item => item.area > 1500).map(item => item.face)
+    );
+
+    // 更新 DOM 与 Matrix 映射
+    faceMetrics.forEach(item => {
+      const f = item.face;
+      const isTop2 = top2Faces.has(f);
+      const m = item.matrix;
+
+      f.slot.style.left = `${item.centerX}px`;
+      f.slot.style.top = `${item.centerY}px`;
+      f.slot.style.transform = `translate(-50%, -50%) matrix(${m.a.toFixed(4)}, ${m.b.toFixed(4)}, ${m.c.toFixed(4)}, ${m.d.toFixed(4)}, 0, 0)`;
+
+      if (isTop2) {
+        if (!f.isActive) {
+          f.isActive = true;
+          f.currentWord = WORD_LOOP[wordQueueIndex];
+          wordQueueIndex = (wordQueueIndex + 1) % WORD_LOOP.length;
+
+          const span = f.slot.querySelector('.link-inner');
+          span.textContent = f.currentWord.text;
+          f.slot.href = f.currentWord.url;
+        }
+        f.slot.style.opacity = '1';
+        f.slot.style.pointerEvents = 'auto';
+      } else {
+        if (f.isActive) {
+          f.isActive = false;
+        }
+        f.slot.style.opacity = '0';
+        f.slot.style.pointerEvents = 'none';
+      }
+    });
+
+    requestAnimationFrame(render);
+  }
+
+  render();
+</script>
+</body>
 </html>
