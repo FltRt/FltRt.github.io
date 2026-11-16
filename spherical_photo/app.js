@@ -162,34 +162,38 @@ $("export").addEventListener("click", async () => {
     );
 
     // iPhone: use native share sheet
-    if (
-      navigator.canShare &&
-      navigator.canShare({ files: [file] })
-    ) {
-      await navigator.share({
-        files: [file],
-        title: "SphereCapture Session"
-      });
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 
-      message("ZIP ready to save.");
-    } else {
-      // Fallback: browser download
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+if (
+  isIOS &&
+  navigator.canShare &&
+  navigator.canShare({ files: [file] })
+) {
+  await navigator.share({
+    files: [file],
+    title: "SphereCapture Session"
+  });
 
-      link.href = url;
-      link.download = "spherecapture-session.zip";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+  message("ZIP ready to save.");
 
-      // Delay cleanup
-      setTimeout(() => {
-        URL.revokeObjectURL(url);
-      }, 10000);
+} else {
+  // Desktop and unsupported browsers: download ZIP
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
 
-      message("ZIP exported.");
-    }
+  link.href = url;
+  link.download = "spherecapture-session.zip";
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 10000);
+
+  message("ZIP exported.");
+}
 
   } catch (error) {
     message("Export error: " + error.message);
