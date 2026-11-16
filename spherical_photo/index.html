@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SphereCapture</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header>
+      <h1>SphereCapture</h1>
+      <p>Spatial Image Capture Prototype</p>
+    </header>
+
+    <section class="camera">
+      <video id="video" autoplay playsinline muted></video>
+      <div id="cameraStatus">Camera not started</div>
+    </section>
+
+    <section class="sensor">
+      <div class="section-title">DEVICE ORIENTATION</div>
+      <div class="readings">
+        <div><span>Alpha</span><strong id="alpha">—</strong></div>
+        <div><span>Beta</span><strong id="beta">—</strong></div>
+        <div><span>Gamma</span><strong id="gamma">—</strong></div>
+      </div>
+      <div id="sensorStatus">Motion sensor inactive</div>
+    </section>
+
+    <section class="controls">
+      <button id="startCamera">Start Camera</button>
+      <button id="startMotion">Enable Motion</button>
+      <button id="capture">Capture Photo</button>
+      <button id="export">Export Session</button>
+    </section>
+
+    <section class="session">
+      <span>Captured photos</span>
+      <strong id="photoCount">0</strong>
+    </section>
+
+    <div id="message"></div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
