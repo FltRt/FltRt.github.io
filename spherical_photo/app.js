@@ -110,37 +110,93 @@ $("capture").addEventListener("click", () => {
 });
 
 // Export session
-$("export").addEventListener("click", () => {
+
+// Export session as ZIP
+$("export").addEventListener("click", async () => {
   if (photos.length === 0) {
     message("No photos to export.");
     return;
   }
 
-  const metadata = photos.map(photo => ({
-    id: photo.id,
-    capturedAt: photo.capturedAt,
-    orientation: photo.orientation,
-    motion: photo.motion,
-    width: photo.width,
-    height: photo.height
-  }));
+  try {
+    message("Preparing ZIP file...");
 
-  const json = new Blob(
-    [JSON.stringify(metadata, null, 2)],
-    { type: "application/json" }
-  );
+    const zip = new JSZip();
 
-  download(json, "spherecapture-session.json");
+    // Add photos
+    photos.forEach(photo => {
+      const base64 = photo.image.split(",")[1];
 
-  photos.forEach(photo => {
-    const link = document.createElement("a");
-    link.href = photo.image;
-    link.download = `spherecapture-${photo.id}.jpg`;
-    link.click();
-  });
+      zip.file(
+        `spherecapture-${photo.id}.jpg`,
+        base64,
+        { base64: true }
+      );
+    });
 
-  message("Session exported.");
+    // Add metadata JSON
+    const metadata = photos.map(photo => ({
+      id: photo.id,
+      capturedAt: photo.capturedAt,
+      orientation: photo.orientation,
+      motion: photo.motion,
+      width: photo.width,
+      height: photo.height
+    }));
+
+    zip.file(
+      "spherecapture-session.json",
+      JSON.stringify(metadata, null, 2)
+    );
+
+    // Generate ZIP
+    const blob = await zip.generateAsync({
+      type: "blob",
+      compression: "STORE"
+    });
+
+    const file = new File(
+      [blob],
+      "spherecapture-session.zip",
+      { type: "application/zip" }
+    );
+
+    // iPhone: use native share sheet
+    if (
+      navigator.canShare &&
+      navigator.canShare({ files: [file] })
+    ) {
+      await navigator.share({
+        files: [file],
+        title: "SphereCapture Session"
+      });
+
+      message("ZIP ready to save.");
+    } else {
+      // Fallback: browser download
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "spherecapture-session.zip";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Delay cleanup
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 10000);
+
+      message("ZIP exported.");
+    }
+
+  } catch (error) {
+    message("Export error: " + error.message);
+    console.error(error);
+  }
 });
+
 
 function download(blob, filename) {
   const url = URL.createObjectURL(blob);
